@@ -25,7 +25,7 @@ setuptools.setup(
   description="You can utilize kyasuda's applications.",
   long_description=long_description,
   long_description_content_type="text/markdown",
-  url="https://github.com/KYasuda516/mylib",
+  url="https://github.com/KYasuda516/python-mylib",
   classifiers=[
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
