@@ -5,17 +5,21 @@ import csv as __csv
 import typing as __typing
 from pathlib import Path as __Path
 
-def load_csv_data(path: __Path, encoding: str='UTF-8', contains_index: bool=False) -> __typing.List[tuple]:    # ボディ部分だけ返す（見出しを含まない）。ボディに何も書いてなかったら[]を返す。
+def load_csv_data(path: __Path, encoding: str='UTF-8', contains_index: bool=False) -> __typing.List[__typing.List[str]]:
+  """CSVファイルを読み込み、見出しを含まずに返す。
+  
+  見出しを除き、ボディ部分だけ返す。
+  ボディに何も書いてなかったら[]を返す。
+  また、たとえ1列のみでも、返されるのは2次元リスト。
+  """
+
   idx_std = 0 if contains_index else 1
   with open(path.as_posix(), newline='\n', encoding=encoding) as f:
-    data = [tuple(row) for idx, row in enumerate(__csv.reader(f)) if idx >= idx_std]      
-    #要素タプルだよ！！注意。(utanet_crawlscrape.pyには何ら影響なし)　ただし1列のみの場合、あとで文字列にする。
+    data = [row for idx, row in enumerate(__csv.reader(f)) if idx >= idx_std]     
   if not data:
     return []
   if not data[0]:
     return []
-  if len(data[0]) == 1:
-    data = [str(row[0]) for row in data]
   return data
 
 def append_csv_data(path: __Path, t: tuple):    # タプルはもちろん1次元。
