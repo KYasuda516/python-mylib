@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Kanta Yasuda (GitHub: @KYasuda516)
+# Copyright (c) 2023 Kanta Yasuda (GitHub: @kyasuda516)
 # This software is released under the MIT License, see LICENSE.
 
 import re as __re
