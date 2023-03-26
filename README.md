@@ -1,5 +1,5 @@
 # mylib
-This is a package that is often required for my (@KYasuda516) Python applications.
+This is a package that is often required for my (@kyasuda516) Python applications.
 I recommend installing before using any of them.
 
 
