@@ -7,7 +7,6 @@ from mylib import path
 from mylib import io
 from mylib import subproc
 from mylib import time
-from mylib import util
 from mylib import virtualbox
 from mylib import subproc
 from mylib import *
