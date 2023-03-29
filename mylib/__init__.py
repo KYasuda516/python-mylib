@@ -14,14 +14,3 @@ from mylib import *
 
 from mylib._func import *
 from mylib._const import *
-
-import logging
-# 出力フォーマットについての詳細は
-# https://docs.python.org/ja/3/library/logging.html#logrecord-attributes
-logging.basicConfig(
-  level=logging.INFO, 
-  filename=P_LOG.as_posix(), 
-  filemode='a', 
-  encoding='UTF-8', 
-  format='[%(process)d] %(asctime)s %(filename)s - %(levelname)s - %(message)s'
-  )
