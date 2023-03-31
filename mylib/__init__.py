@@ -12,4 +12,3 @@ from mylib import subproc
 from mylib import *
 
 from mylib._func import *
-from mylib._const import *
