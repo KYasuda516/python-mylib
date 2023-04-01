@@ -81,11 +81,16 @@ def fix_path(
     ]
 
   # Unixマシンの場合
-  if isinstance(path, PosixPath):
-    comps = map(str.replace(':', new_char), comps)
+  if isinstance(path, WindowsPath):
+  # if isinstance(path, PosixPath):
+    comps = [
+      comp.replace(':', new_char)
+      for comp in comps
+    ]
 
   # Windowsの場合
-  if isinstance(path, WindowsPath):
+  if isinstance(path, PosixPath):
+  # if isinstance(path, WindowsPath):
     import re
     # 不正な文字を置換
     comps = [
