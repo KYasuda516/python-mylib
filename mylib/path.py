@@ -54,6 +54,72 @@ def postfix_stem(path: __Path, post_stem: str, replace_file: bool=False) -> __Pa
   p = convert_suffix(path=path, suffix=path.suffix, post_stem=post_stem, replace_file=replace_file)
   return p
 
+def fix_path(
+    path: __Path, 
+    pre_period: bool=True,
+    new_char: str='_'
+    ) -> __Path:
+  """不正なパスを修正
+
+  OSによって禁止されているファイル・ディレクトリ名があるので、
+  それを修正してパスとして返す。
+
+  - path: ファイルまたはディレクトリのパス
+  - pre_period: 先頭の `.` を許可するかどうか。False にすると先頭の `.` は置換される。
+  - new_char: 不当な文字を用いていた場合、それを何に置換するか。
+  """
+
+  from pathlib import PosixPath, WindowsPath
+  comps = list(path.parts)
+  
+  # 先頭のピリオドが許可されていない場合、置換
+  if not pre_period:
+    comps = [
+      new_char + comp[1:]
+      for comp in comps
+      if comp[0]=='.'
+    ]
+
+  # Unixマシンの場合
+  if isinstance(path, PosixPath):
+    comps = map(str.replace(':', new_char), comps)
+
+  # Windowsの場合
+  if isinstance(path, WindowsPath):
+    import re
+    # 不正な文字を置換
+    comps = [
+      re.sub(r'[\:\*\?"\<\>\|\n\r\t\v]', new_char, comp)
+      if not (i==0 and re.compile(r'[a-zA-Z]\:\\').fullmatch(comp))
+      else comp
+      for i, comp in enumerate(comps)
+    ]
+    # 末尾のピリオドを置換
+    comps = [
+      comp[:-1] + new_char
+      if comp[-1]=='.'
+      else comp
+      for comp in comps
+    ]
+    # 予約語はステム末尾に文字を付加する
+    comps = [
+      re.sub(
+        r'^(aux|con|nul|prn|com\d|lpt\d)',
+        f'\\1{new_char}',
+        comp,
+        flags=re.IGNORECASE
+      )
+      if re.fullmatch(
+        r'(aux|con|nul|prn|com\d|lpt\d)(\..+)?', 
+        comp, 
+        flags=re.IGNORECASE
+      )
+      else comp
+      for comp in comps
+    ]
+  
+  return __Path(*comps)
+
 class TempDirPath(type(__Path())):  # これそのままPathを継承しようとしたらAttributeError: 'TempDirPath' object has no attribute '_flavour'というエラーに逢着するのでこうしている。
   """一時フォルダのパス
   
