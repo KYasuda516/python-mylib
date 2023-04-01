@@ -77,7 +77,7 @@ def fix_path(
     comps = [
       new_char + comp[1:]
       for comp in comps
-      if comp[0]=='.'
+      if comp[0]=='.' and not comp in ('.', '..')
     ]
 
   # Unixマシンの場合
@@ -102,7 +102,7 @@ def fix_path(
     # 末尾のピリオドを置換
     comps = [
       comp[:-1] + new_char
-      if comp[-1]=='.'
+      if comp[-1]=='.' and not comp in ('.', '..')
       else comp
       for comp in comps
     ]
