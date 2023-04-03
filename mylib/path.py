@@ -15,14 +15,26 @@ def create_temp_path(ext: str) -> __Path:
   newpath = __Path(f'{stem}{ext}')
   return newpath
 
-def mkdir_empty(p: __Path):
-  if p.exists():
-    if p.is_dir():
-      import shutil
-      shutil.rmtree(p.as_posix())
-    else:
-      raise FileExistsError(f'It already exists as a file.: {p.as_posix()}')
-  p.mkdir(parents=True)
+def mkdir_empty(path: __Path, exist_ok: bool=False):
+  """空のディレクトリを作成
+  
+  path: 対象のディレクトリのパス
+  exist_ok: Trueにすると、pathがディレクトリまたはファイルとして存在していた場合、
+  それを削除したうえで作成する。
+  """
+
+  if not path.exists():
+    path.mkdir(parents=True)
+  if not exist_ok:
+    FileExistsError(
+      f'Cannot create a file when that file already exists: {path.as_posix()}'
+      )
+  if path.is_dir():
+    import shutil
+    shutil.rmtree(path.as_posix())
+  else:
+    path.unlink()
+  path.mkdir(parents=True)
 
 def fix_path(
     path: __Path, 
