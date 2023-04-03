@@ -44,12 +44,6 @@ def convert_suffix(path: __Path, suffix: str, post_stem: str='', replace_file: b
     print(p)
   return p
 
-def open_dir_for_temp():
-  from . import subproc
-  from tempfile import gettempdir
-  stdout = subproc.run_proccess(['start', gettempdir()])
-  print(stdout)
-
 def postfix_stem(path: __Path, post_stem: str, replace_file: bool=False) -> __Path:
   p = convert_suffix(path=path, suffix=path.suffix, post_stem=post_stem, replace_file=replace_file)
   return p
