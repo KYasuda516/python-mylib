@@ -6,14 +6,16 @@ from pathlib import Path as __Path
 def create_temp_path(ext: str) -> __Path:
   """拡張子つきで一時ファイルのパスを作成して返す。
   
-  extにはピリオドつきの拡張子を渡す。
+  ext: ピリオドつきの拡張子
   """
 
   from tempfile import TemporaryFile
-  with TemporaryFile() as fp:
-    stem = fp.name
-  newpath = __Path(f'{stem}{ext}')
-  return newpath
+  while True:
+    f = TemporaryFile()
+    stem = f.name
+    f.close()
+    p = __Path(f'{stem}{ext}')
+    if not p.exists(): return p
 
 def mkdir_empty(path: __Path, exist_ok: bool=False):
   """空のディレクトリを作成
