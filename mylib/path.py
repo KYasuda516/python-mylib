@@ -34,16 +34,6 @@ def mkdir_empty(p: __Path):
       exit()
   p.mkdir(parents=True)
 
-def convert_suffix(path: __Path, suffix: str, post_stem: str='', replace_file: bool=False) -> __Path:
-  from .time import get_timecode
-  # replace_fileがFalseの場合、ファイルが存在していればタイムコードをつけることで上書きを防ぐが、
-  # replace_fileがTrueの場合、ファイルが存在していても上書きしてしまう。
-  p = path.with_name(f'{path.stem}{post_stem}{suffix}')
-  if not replace_file and p.exists():
-    p = p.with_name(f'{p.stem}_{get_timecode}{p.suffix}')  # {get_timecode()}
-    print(p)
-  return p
-
 def fix_path(
     path: __Path, 
     pre_period: bool=True,
