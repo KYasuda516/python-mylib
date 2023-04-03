@@ -44,10 +44,6 @@ def convert_suffix(path: __Path, suffix: str, post_stem: str='', replace_file: b
     print(p)
   return p
 
-def postfix_stem(path: __Path, post_stem: str, replace_file: bool=False) -> __Path:
-  p = convert_suffix(path=path, suffix=path.suffix, post_stem=post_stem, replace_file=replace_file)
-  return p
-
 def fix_path(
     path: __Path, 
     pre_period: bool=True,
