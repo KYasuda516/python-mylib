@@ -123,6 +123,22 @@ def fix_path(
   
   return __Path(*comps)
 
+def avoid_overwrite(path: __Path, is_dir=False) -> __Path:
+  """ファイルやディレクトリが既に存在する場合に、数字を付け加えることで上書きを回避
+  
+  path: 対象のパス
+  is_dir: 対象のパスをディレクトリと想定している場合Trueにする
+  """
+
+  if not path.exists(): return path
+  n = 1
+  while True:
+    new_path = path.with_name(f'{path.name} ({n})') \
+      if is_dir \
+      else path.with_stem(f'{path.stem} ({n})')
+    if not new_path.exists(): return new_path
+    n += 1
+
 class TempDirPath(type(__Path())):  # これそのままPathを継承しようとしたらAttributeError: 'TempDirPath' object has no attribute '_flavour'というエラーに逢着するのでこうしている。
   """一時フォルダのパス
   
