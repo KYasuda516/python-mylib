@@ -8,20 +8,11 @@ def create_temp_path(ext: str) -> __Path:
   
   extにはピリオドつきの拡張子を渡す。
   """
+  
   from tempfile import TemporaryFile
   with TemporaryFile() as fp:
     stem = fp.name
   newpath = __Path(f'{stem}{ext}')
-  return newpath
-
-def copy_as_temp(path: __Path) -> __Path:
-  """拡張子つきで一時ファイルとしてコピーし、そのパスを返す。
-  
-  finallyで削除することを忘れずに!
-  """
-  import shutil
-  newpath = create_temp_path(path.suffix)
-  shutil.copy(path.as_posix(), newpath.as_posix())
   return newpath
 
 def mkdir_empty(p: __Path):
