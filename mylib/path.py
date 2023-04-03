@@ -8,7 +8,7 @@ def create_temp_path(ext: str) -> __Path:
   
   extにはピリオドつきの拡張子を渡す。
   """
-  
+
   from tempfile import TemporaryFile
   with TemporaryFile() as fp:
     stem = fp.name
@@ -21,8 +21,7 @@ def mkdir_empty(p: __Path):
       import shutil
       shutil.rmtree(p.as_posix())
     else:
-      print(f'It has existed as a file.: {p.as_posix()}')
-      exit()
+      raise FileExistsError(f'It already exists as a file.: {p.as_posix()}')
   p.mkdir(parents=True)
 
 def fix_path(
