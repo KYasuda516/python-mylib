@@ -2,6 +2,7 @@
 # This software is released under the MIT License, see LICENSE.
 
 from pathlib import Path as __Path
+from typing import Union as __Union
 
 def create_temp_path(ext: str) -> __Path:
   """拡張子つきで一時ファイルのパスを作成して返す。
@@ -17,7 +18,7 @@ def create_temp_path(ext: str) -> __Path:
     p = __Path(f'{stem}{ext}')
     if not p.exists(): return p
 
-def mkdir_empty(path: __Path, exist_ok: bool=False):
+def mkdir_empty(path: __Union[__Path, str], exist_ok: bool=False):
   """空のディレクトリを作成
   
   path: 対象のディレクトリのパス
@@ -25,6 +26,7 @@ def mkdir_empty(path: __Path, exist_ok: bool=False):
   それを削除したうえで作成する。
   """
 
+  path = __Path(path) if isinstance(path, str) else path
   if not path.exists():
     path.mkdir(parents=True)
   if not exist_ok:
@@ -39,7 +41,7 @@ def mkdir_empty(path: __Path, exist_ok: bool=False):
   path.mkdir(parents=True)
 
 def fix_path(
-    path: __Path, 
+    path: __Union[__Path, str], 
     pre_period: bool=True,
     new_char: str='_'
     ) -> __Path:
@@ -52,6 +54,8 @@ def fix_path(
   - pre_period: 先頭の `.` を許可するかどうか。False にすると先頭の `.` は置換される。
   - new_char: 不当な文字を用いていた場合、それを何に置換するか。
   """
+
+  path = __Path(path) if isinstance(path, str) else path
 
   from pathlib import PosixPath, WindowsPath
   comps = list(path.parts)
@@ -107,12 +111,14 @@ def fix_path(
   
   return __Path(*comps)
 
-def avoid_overwrite(path: __Path, is_dir=False) -> __Path:
+def avoid_overwrite(path: __Union[__Path, str], is_dir=False) -> __Path:
   """ファイルやディレクトリが既に存在する場合に、数字を付け加えることで上書きを回避
   
   path: 対象のパス
   is_dir: 対象のパスをディレクトリと想定している場合Trueにする
   """
+
+  path = __Path(path) if isinstance(path, str) else path
 
   if not path.exists(): return path
   n = 1
@@ -131,24 +137,31 @@ class TempDirPath(type(__Path())):  # これそのままPathを継承しよう�
   """
   
   from typing import Any as __Any
+  from typing import Union as __Union
+  from pathlib import Path as __Path
+
   def __new__(cls, **kwargs: __Any):
     temp_path = create_temp_path('')
     self = super().__new__(cls, temp_path.as_posix(), **kwargs)
     temp_path.mkdir()
     return self
 
-  from pathlib import Path as __Path
-  def move_contents(self, dir_path: __Path):
+  def move_contents(self, dir_path: __Union[__Path, str]):
     """中身をまるごと別のディレクトリへと移動
     
-    別ディレクトリに同名のファイルがあれば上書きされる。
+    なお、別ディレクトリに同名のファイルがあれば上書きされる。
+    dir_path: 移動先のディレクトリのパス
     """
+
+    dir_path = __Path(dir_path) if isinstance(dir_path, str) else dir_path
+    
     import shutil
     for p in self.iterdir():
       shutil.move(p.as_posix(), (dir_path / p.name).as_posix())
 
   def empty(self):
     """フォルダを空にする"""
+
     import shutil
     shutil.rmtree(self.as_posix())
     self.mkdir()
