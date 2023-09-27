@@ -3,6 +3,7 @@
 
 from pathlib import Path as __Path
 from typing import Union as __Union
+import shutil
 
 def create_temp_path(ext: str) -> __Path:
   """拡張子つきで一時ファイルのパスを作成して返す。
@@ -129,6 +130,15 @@ def avoid_overwrite(path: __Union[__Path, str], is_dir=False) -> __Path:
     if not new_path.exists(): return new_path
     n += 1
 
+def move(src_path: __Union[__Path, str], dst_path: __Union[__Path, str]) -> None:
+  shutil.move(src_path, dst_path)
+
+def copy(src_path: __Union[__Path, str], dst_path: __Union[__Path, str], include_meta=False) -> None:
+  if include_meta:
+    shutil.copy2(src_path, dst_path)
+  else:
+    shutil.copy(src_path, dst_path)
+
 class TempDirPath(type(__Path())):  # これそのままPathを継承しようとしたらAttributeError: 'TempDirPath' object has no attribute '_flavour'というエラーに逢着するのでこうしている。
   """一時フォルダのパス
   
@@ -155,18 +165,15 @@ class TempDirPath(type(__Path())):  # これそのままPathを継承しよう�
 
     dir_path = __Path(dir_path) if isinstance(dir_path, str) else dir_path
     
-    import shutil
     for p in self.iterdir():
       shutil.move(p.as_posix(), (dir_path / p.name).as_posix())
 
   def empty(self):
     """フォルダを空にする"""
 
-    import shutil
     shutil.rmtree(self.as_posix())
     self.mkdir()
 
   def __del__(self):
-    import shutil
     shutil.rmtree(self.as_posix(), ignore_errors=True)  # 削除に失敗してもエラーにしない
 

@@ -44,27 +44,41 @@ def num_input(message: str, start: int, stop: int) -> int:
     except:
       pass
 
-def num_input2(question: str, d_msg: dict, msg_bef: str='', msg_aft: str='') -> __typing.Any:
-  """ユーザーに選択肢の入力を促し、辞書のキーに対応する値を返す。
+def num_input2(question: str, options: __typing.Union[list, dict], opt_prefix: str='', opt_suffix: str='') -> __typing.Any:
+  """ユーザーに選択肢の入力を促し、リストの値、または辞書のキーに対応する値を返す。
 
   Args:
     question (str): 入力を促すためのメッセージ。
-    d_msg (dict): 選択肢の辞書。キーは整数、値は選択肢の名前を表す文字列。
-    msg_bef (str, optional): 各選択肢の名前の前に表示する文字列。デフォルトは空文字列。
-    msg_aft (str, optional): 各選択肢の名前の後に表示する文字列。デフォルトは空文字列。
+    options (list | dict): 選択肢のリストまたは辞書。
+    opt_prefix (str, optional): 各選択肢の名前の前に表示する文字列。デフォルトは空文字列。
+    opt_suffix (str, optional): 各選択肢の名前の後に表示する文字列。デフォルトは空文字列。
 
   Returns:
     Any: 選択された選択肢のキーに対応する値。
   """
 
-  keys = list(d_msg.keys())
-  msg = f'{question}\n'
+  keys = None
+  options_type = type(options).__name__
+
+  if options_type == 'list':
+    keys = list(range(len(options)))
+  elif options_type == 'dict':
+    keys = list(options.keys())
+  else:
+    raise TypeError("argument 'options' must be list or dict.")
+  
+  msg = question
   for idx, key in enumerate(keys):
-    msg = f'{msg}{idx: 3}\t{msg_bef}{d_msg[key]}{msg_aft}\n'
-  msg = msg[:-1]  # 最後の改行を取っ払う
+    msg = f'{msg}\n{idx: 3}\t{opt_prefix}{options[key]}{opt_suffix}'
   idx = num_input(msg, 0, len(keys))
-  key = keys[idx]
-  return key
+  
+  if options_type == 'list':
+    value = options[idx]
+    return value
+  elif options_type == 'dict':
+    key = keys[idx]
+    return key
+
 
 def blank_ng_input(message: str) -> str:
   """ユーザーに対して、入力を求める。この関数は、入力が空の場合に再試行を求める。
@@ -115,7 +129,7 @@ class Outputter():
   """
 
   from pathlib import Path as __Path
-  def __init__(self, txt_path: __Path):
+  def __init__(self, txt_path: __Path, encoding: str='UTF-8'):
     """Outputterクラスのコンストラクタ。引数で指定されたパスのテキストファイルを作成する。
 
     Args:
@@ -123,7 +137,8 @@ class Outputter():
     """
 
     self.txt_path = txt_path
-    with open(self.txt_path.as_posix(), 'w') as f:
+    self.encoding = encoding
+    with open(self.txt_path.as_posix(), 'w', encoding=self.encoding) as f:
       f.write('')
   
   def output(self, msg: str):
@@ -136,5 +151,5 @@ class Outputter():
       None
     """
 
-    with open(self.txt_path.as_posix(), 'a') as f:
+    with open(self.txt_path.as_posix(), 'a', encoding=self.encoding) as f:
       f.write(msg)

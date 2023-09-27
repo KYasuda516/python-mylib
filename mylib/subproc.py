@@ -13,7 +13,7 @@ def run(*commands) -> str:
   # 注意：この関数はmylib.path.open_dir_for_temp()から依存されている
   proc = __sp.run(commands, shell=True, stdout=__sp.PIPE, stderr=__sp.STDOUT)
   if proc.returncode != 0:
-    raise Exception(proc.stderr.decode('shift-jis'))
+    raise Exception(proc.stdout.decode('shift-jis'))
   stdout = proc.stdout.decode('shift-jis')
   return stdout
 
